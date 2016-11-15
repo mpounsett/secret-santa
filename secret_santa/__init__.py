@@ -246,6 +246,7 @@ class App(object):
 
         if pairings is None:
             self.logger.error("Failed to find all pairings.")
+            sys.exit(1)
 
         if self.args.pairings_file:
             with secret_santa.file.safe_write(self.args.pairings_file) as f:
