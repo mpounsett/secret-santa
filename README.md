@@ -1,7 +1,8 @@
-# Secret Sants
+# Secret Santa
 
 A tool to do Secret Santa pairings.
 
 Written for python 3.
 
-Probably not suitable for large groups.
+The matching algorithm is untested with large groups and may be unsuitable due
+to the brute force nature of resolving exclusion conflicts.
