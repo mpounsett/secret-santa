@@ -259,17 +259,17 @@ class App(object):
         else:
             (host, port) = (server, 587)
 
-        s = smtplib.SMTP_SSL(host, port)
+        s = smtplib.SMTP(host, port)
         try:
             s.ehlo()
         except Exception as e:
             self.logger.error("Failed first EHLO: {!r}".format(e))
             raise
-        # try:
-        #     s.starttls()
-        # except Exception as e:
-        #     self.logger.error("Failed starttls: {!r}".format(e))
-        #     raise
+        try:
+            s.starttls()
+        except Exception as e:
+            self.logger.error("Failed starttls: {!r}".format(e))
+            raise
         try:
             s.ehlo()
         except Exception as e:
