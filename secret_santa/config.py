@@ -16,6 +16,7 @@ def gen_config():
         max_tries = 5
         # pidfile = /var/run/secret_santa.pid
         mail_server = smtp.google.com
+        mail_tls = True
         # user and password are optional
         # mail_user = smtpUserName
         # mail_password = smtpPassword

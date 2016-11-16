@@ -265,7 +265,8 @@ class App(object):
 
         try:
             s = smtplib.SMTP(host, port)
-            s.starttls()
+            if self.config.getboolean(app, 'mail_tls'):
+                s.starttls()
             if user and password:
                 s.login(user, password)
         except Exception as e:
