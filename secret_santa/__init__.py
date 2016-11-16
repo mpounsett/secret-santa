@@ -7,7 +7,11 @@ import logging
 import os
 import pprint
 import random
+import smtplib
 import sys
+
+from email.mime.text import MIMEText
+from jinja2 import Template
 
 import secret_santa.version
 import secret_santa.config
@@ -230,6 +234,56 @@ class App(object):
 
         return pairings
 
+    def send_message(self, to, name, pair):
+
+        self.logger.info("Sending email to {!r} ({!r})".format(name, to))
+
+        app = self.app_name.lower()
+
+        user = self.config.get(app, 'mail_user')
+        password = self.config.get(app, 'mail_password')
+
+        msg = MIMEText(Template(
+            self.config.get(app, 'mail_body')
+        ).render(name=name, pair=pair))
+
+        msg['Subject'] = Template(
+            self.config.get(app, 'mail_subject')
+        ).render(name=name, pair=pair)
+        msg['From'] = self.config.get(app, 'mail_from')
+        msg['To'] = to
+
+        server = self.config.get(self.app_name.lower(), 'mail_server')
+        if ":" in server:
+            (host, port) = server.split(":")
+        else:
+            (host, port) = (server, 587)
+
+        s = smtplib.SMTP_SSL(host, port)
+        try:
+            s.ehlo()
+        except Exception as e:
+            self.logger.error("Failed first EHLO: {!r}".format(e))
+            raise
+        # try:
+        #     s.starttls()
+        # except Exception as e:
+        #     self.logger.error("Failed starttls: {!r}".format(e))
+        #     raise
+        try:
+            s.ehlo()
+        except Exception as e:
+            self.logger.error("Failed second EHLO: {!r}".format(e))
+            raise
+        try:
+            s.login(user, password)
+        except Exception as e:
+            self.logger.error("Failed login: {!r}".format(e))
+            raise
+
+        s.send_message(msg)
+        s.quit()
+
     def main_loop(self):
         max_tries = self.config.getint(self.app_name.lower(), 'max_tries')
         tries = 0
@@ -251,6 +305,10 @@ class App(object):
         if self.args.pairings_file:
             with secret_santa.file.safe_write(self.args.pairings_file) as f:
                 f.write(pprint.pformat(pairings))
+
+        for k, v in pairings.items():
+            email = self.config.get(k, 'email')
+            self.send_message(email, k, v)
 
 
 def setup_app():
