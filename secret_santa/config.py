@@ -13,7 +13,21 @@ def gen_config():
 
         [general]
         send_email = False
-        write_matrix = True
+        max_tries = 5
+        # pidfile = /var/run/secret_santa.pid
+        mail_server = smtp.google.com
+        mail_user = smtpUserName
+        mail_password = smtpPassword
+        mail_subject = Family secret santa!
+        mail_body = Hi {{ name }}!
+                    Your secret santa pick has been done.  The name you've
+                    received is:
+
+                                    {{ pair }}
+
+                    Merry Christmas!
+                    Regards,
+                        - The Family Robot
 
         [Joe]
         email = joe_blow@example.com
