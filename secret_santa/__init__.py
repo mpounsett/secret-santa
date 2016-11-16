@@ -259,30 +259,18 @@ class App(object):
         else:
             (host, port) = (server, 587)
 
-        s = smtplib.SMTP(host, port)
         try:
-            s.ehlo()
-        except Exception as e:
-            self.logger.error("Failed first EHLO: {!r}".format(e))
-            raise
-        try:
+            s = smtplib.SMTP(host, port)
             s.starttls()
-        except Exception as e:
-            self.logger.error("Failed starttls: {!r}".format(e))
-            raise
-        try:
-            s.ehlo()
-        except Exception as e:
-            self.logger.error("Failed second EHLO: {!r}".format(e))
-            raise
-        try:
             s.login(user, password)
         except Exception as e:
-            self.logger.error("Failed login: {!r}".format(e))
-            raise
-
-        s.send_message(msg)
-        s.quit()
+            self.logger.error("Failed to setup SMTP session: {!r}".format(e))
+        else:
+            try:
+                s.send_message(msg)
+                s.quit()
+            except:
+                self.logger.error("Failed to send message: {!r}".format(e))
 
     def main_loop(self):
         max_tries = self.config.getint(self.app_name.lower(), 'max_tries')
