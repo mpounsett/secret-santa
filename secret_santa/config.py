@@ -16,8 +16,9 @@ def gen_config():
         max_tries = 5
         # pidfile = /var/run/secret_santa.pid
         mail_server = smtp.google.com
-        mail_user = smtpUserName
-        mail_password = smtpPassword
+        # user and password are optional
+        # mail_user = smtpUserName
+        # mail_password = smtpPassword
         mail_subject = Family secret santa!
         mail_body = Hi {{ name }}!
                     Your secret santa pick has been done.  The name you've

@@ -240,8 +240,12 @@ class App(object):
 
         app = self.app_name.lower()
 
-        user = self.config.get(app, 'mail_user')
-        password = self.config.get(app, 'mail_password')
+        if (self.config.has_option(app, 'mail_user') and
+                self.config.has_option(app, 'mail_password')):
+            user = self.config.get(app, 'mail_user')
+            password = self.config.get(app, 'mail_password')
+        else:
+            user = password = None
 
         msg = MIMEText(Template(
             self.config.get(app, 'mail_body')
@@ -262,7 +266,8 @@ class App(object):
         try:
             s = smtplib.SMTP(host, port)
             s.starttls()
-            s.login(user, password)
+            if user and password:
+                s.login(user, password)
         except Exception as e:
             self.logger.error("Failed to setup SMTP session: {!r}".format(e))
         else:
