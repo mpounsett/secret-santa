@@ -20,6 +20,7 @@ def gen_config():
         # user and password are optional
         # mail_user = smtpUserName
         # mail_password = smtpPassword
+        mail_from = santa@example.com
         mail_subject = Family secret santa!
         mail_body = Hi {{ name }}!
                     Your secret santa pick has been done.  The name you've
