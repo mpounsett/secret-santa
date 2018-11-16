@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 from distutils.util import convert_path
-from pip.download import PipSession
-from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 main_ns = {}
@@ -28,12 +26,12 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'secret-santa = secret_santa:app_setup',
+            'secret-santa = secret_santa:setup_app',
         ]
     },
 
     install_requires=[
-        str(x.req) for x in parse_requirements('requirements.txt',
-                                               session=PipSession())
+        'PyYAML>=3.12',
+        'Jinja2>=2.8',
     ],
 )
