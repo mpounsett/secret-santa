@@ -141,6 +141,11 @@ class App(object):
             type=str,
             dest='pairings_file',
         )
+        parser.add_argument(
+            '-N', '--no-email',
+            help="Do not send email (use for testing)",
+            action='store_true',
+        )
         return parser.parse_args()
 
     def get_config_paths(self, env):
@@ -200,7 +205,9 @@ class App(object):
             self.logger.info("======")
             self.logger.info("Selecting pairing for {!r}".format(person))
 
-            exclude = self.config.get(person, 'exclude').split()
+            exclude = self.config.get(person, 'exclude').split(',')
+
+            self.logger.info("Exclusions: {}".format(exclude))
 
             options = people.copy()
             self.logger.info("Beginning options: {!r}".format(options))
@@ -275,7 +282,7 @@ class App(object):
             try:
                 s.send_message(msg)
                 s.quit()
-            except:
+            except Exception as e:
                 self.logger.error("Failed to send message: {!r}".format(e))
 
     def main_loop(self):
@@ -300,9 +307,10 @@ class App(object):
             with secret_santa.file.safe_write(self.args.pairings_file) as f:
                 f.write(pprint.pformat(pairings))
 
-        for k, v in pairings.items():
-            email = self.config.get(k, 'email')
-            self.send_message(email, k, v)
+        if not self.args.no_email:
+            for k, v in pairings.items():
+                email = self.config.get(k, 'email')
+                self.send_message(email, k, v)
 
 
 def setup_app():
