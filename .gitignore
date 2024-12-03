@@ -6,3 +6,4 @@ dist
 *_picks.txt
 *.swp
 *.yaml
+.idea
