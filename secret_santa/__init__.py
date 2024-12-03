@@ -289,6 +289,7 @@ class App(object):
         max_tries = self.config.getint(self.app_name.lower(), 'max_tries')
         tries = 0
         picked = False
+        pairings = None
         while tries < max_tries and not picked:
             tries += 1
             try:
